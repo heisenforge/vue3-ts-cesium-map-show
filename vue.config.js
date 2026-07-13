@@ -12,6 +12,12 @@ module.exports = {
   outputDir: '../../../public/assets/addons/cesiummapv/vue3', // bulid发布后，资源的导出目录
   assetsDir: '../../../../assets/addons/cesiummapv/vue3/',		// 静态资源目录 ../../../../assets/addons/cesiummapv/vue3/
   productionSourceMap: false,
+  configureWebpack: {
+    externals: {
+      'cesium': 'Cesium',
+      'cesium/Source/Cesium.js': 'Cesium'
+    }
+  },
   devServer: {
     proxy: {
       '/api': {

@@ -1,0 +1,8 @@
+allowBuilds:
+  '@parcel/watcher': true
+  core-js: true
+  fsevents: true
+  yorkie: true
+overrides:
+  cesium: 1.82.0
+  vue-router: 4.0.15

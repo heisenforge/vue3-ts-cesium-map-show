@@ -37,12 +37,34 @@ export default defineComponent({
       window.Gviewer = viewer // 全局控制台 调试viewer
       // 显示经纬度绑定事件
       ShowLngLatRef.value.initCesiumHandler(viewer)
-      // 飞到配置的坐标
-      ButtonToolsRef.value.flyTo()
+      // 飞到配置的坐标 (防止与电厂对焦冲突导致闪烁)
+      // ButtonToolsRef.value.flyTo()
 
-      // 处理 白膜
-      const GTitleset = new Titleset(viewer)
-      GTitleset.init()
+      // 加载火电厂冷却塔模型
+      const position = Cesium.Cartesian3.fromDegrees(113.9218, 22.5116, 0)
+      const heading = Cesium.Math.toRadians(0)
+      const hpr = new Cesium.HeadingPitchRoll(heading, 0, 0)
+      const orientation = Cesium.Transforms.headingPitchRollQuaternion(position, hpr)
+      
+      const towerEntity = viewer.entities.add({
+        name: '冷却塔模型',
+        position: position,
+        orientation: orientation,
+        model: {
+          uri: `${process.env.BASE_URL}thermal_power_plant__cooling_tower.glb`,
+          minimumPixelSize: 128,
+          maximumScale: 20000,
+          scale: 1.0,
+          heightReference: Cesium.HeightReference.CLAMP_TO_GROUND
+        }
+      })
+
+      // 镜头直接飞向并对焦到这个冷却塔模型
+      viewer.zoomTo(towerEntity)
+
+      // 处理 白膜 (江苏电厂项目不需要深圳城市白膜)
+      // const GTitleset = new Titleset(viewer)
+      // GTitleset.init()
 
       // 模型List
       const GPrimitive = new Primitive(viewer)
@@ -52,9 +74,9 @@ export default defineComponent({
       const GManager = new Manager(viewer)
       GManager.init()
 
-      // 公路效果
-      const GRoadNetwork = new RoadNetwork(viewer, 'road')
-      GRoadNetwork.init()
+      // 公路效果 (江苏电厂项目不需要深圳公路网)
+      // const GRoadNetwork = new RoadNetwork(viewer, 'road')
+      // GRoadNetwork.init()
 
     }
     onBeforeMount(() => {
